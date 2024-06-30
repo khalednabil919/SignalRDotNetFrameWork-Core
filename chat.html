@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/jquery-1.6.4.js"></script>
+    <script src="Scripts/jquery.signalR-2.4.2.min.js"></script>
+
+    <!--load proxy file-->
+    <!--<script src="/signalr/hubs"></script>
+    this demo for javeScript auto generated proxy
+
+    <script>-->
+    <!--$(function () {
+
+        name = prompt("enter your name");
+
+        //limit hub chossing specific hub from hubs because java script generate proxy for all generated signalR classes
+        prox = $.connection.chat;-->
+    <!--//start connection
+            // negotiation layer
+            $.connection.hub.start();
+            //$.connection.hub.start({transport:['longPolling','foreverFrame']});
+
+
+            //subscribe callback method new message
+            prox.client.newMessage = function (n, m) {
+                $('ul').append("<li>"+n+": "+m+"</li>")
+            }
+
+        })
+
+        function send() {
+            prox.server.sendMessage(name, $("#txt").val());
+        }
+
+    </script>-->
+
+
+    <!--this demo for create our own proxy with specified class hub--> 
+    <script>
+
+        $(function () {
+            name = prompt("enter your name");
+            // define connection
+            var con = $.hubConnection();
+
+            // create proxy
+            //this proxy is created for [chat] only one signalR class which inherited from Hub
+            prox = con.createHubProxy("chat");
+
+            // start connection
+            con.start();
+
+            // define subscribe method newMessage
+            prox.on("newMessage", function (n,m) {
+                $('ul').append("<li>" + n + ": " + m + "</li>")
+
+            })
+            //define subscribe method newMember
+                prox.on("newMember", function (n, g) {
+                    console.log("ok");
+                $('ul').append("<li><i>" + n + " joined " + g + "</i></li>")
+                    console.log("ok");
+
+                })
+            prox.on("sendToAllMemberInGroup", function (n, g, m) {
+                $('ul').append("<li>" + n + "("+ g+ ")"+":" +m +"</li>")
+            })
+
+        })
+
+        // calling server method sendMessage
+        function send() {
+            prox.invoke("sendMessage", name, $("#txt").val())
+        }
+        function join() {
+            prox.invoke("joinGroup", $("#gtxt").val(), name);
+        }
+
+        function sendGroup() {
+            prox.invoke("sendGroup", name ,$("#gtxt").val(), $("#txt").val())
+        }
+
+    </script>
+</head>
+<body>
+
+
+    <input type="text" id="txt"/>
+    <input type="button" value="send" onclick="send()"/>
+    <br />
+    <input type="text" id="gtxt"/>
+    <input type="button" value="join" onclick="join()"/>
+    <input type="button" value="sendMessageToAllMemberInGroup" onclick="sendGroup()"/>
+
+    <ul>
+        <li>message</li>
+    </ul>
+</body>
+</html>
